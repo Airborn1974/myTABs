@@ -36,6 +36,30 @@ npm i
 npm run dev
 ```
 
+## Linting
+
+This project uses ESLint for code linting. To run the linter, use the following command:
+
+```sh
+npm run lint
+```
+
+The linting process currently passes without any errors.
+
+## Build Process
+
+To create a production build of the project, run the following command:
+
+```sh
+npm run build
+```
+
+This command bundles the application for deployment. The build process currently completes successfully.
+
+**Note on Browserslist:** During the build, you might see a message like:
+`Browserslist: browsers data (caniuse-lite) is 7 months old. Please run: npx update-browserslist-db@latest`
+This is a recommendation to update the project's browser compatibility data. It's good practice to run `npx update-browserslist-db@latest` periodically for future maintenance, but it's not an error and does not prevent a successful build.
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
@@ -59,6 +83,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- ESLint
 
 ## How can I deploy this project?
 
