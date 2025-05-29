@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import { 
@@ -44,7 +43,7 @@ const HelpPage: React.FC = () => {
         
         <div className="prose max-w-none dark:prose-invert mb-6">
           <p className="text-lg text-muted-foreground">
-            Welcome to Tab Flow Canvas! This guide will help you understand how to use the application
+            Welcome to myTABs! This guide will help you understand how to use the application
             efficiently and take advantage of all its features.
           </p>
         </div>
@@ -56,7 +55,7 @@ const HelpPage: React.FC = () => {
             </AccordionTrigger>
             <AccordionContent className="text-base space-y-3">
               <p>
-                Tab Flow Canvas is a productivity tool that helps you organize your work by storing tabs, notes, and to-do lists 
+                myTABs is a productivity tool that helps you organize your work by storing tabs, notes, and to-do lists 
                 in a visual workspace. The interface uses a Kanban-style layout with groups, making it easy to manage your workflow.
               </p>
               <p>
@@ -70,7 +69,7 @@ const HelpPage: React.FC = () => {
               Getting Started
             </AccordionTrigger>
             <AccordionContent className="text-base space-y-3">
-              <p>To start using Tab Flow Canvas:</p>
+              <p>To start using myTABs:</p>
               <ol className="list-decimal pl-6 space-y-2">
                 <li>Click the <strong>"Create New"</strong> button in the top navigation bar.</li>
                 <li>Choose what type of item you want to create: Tab, Note, or Todo List.</li>
@@ -184,7 +183,7 @@ const HelpPage: React.FC = () => {
               </div>
             </AccordionTrigger>
             <AccordionContent className="text-base space-y-3">
-              <p>Tab Flow Canvas offers three theme options:</p>
+              <p>myTABs offers three theme options:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>Light:</strong> A bright theme for daytime use.</li>
                 <li><strong>Dark:</strong> A dark theme that's easier on the eyes, especially at night.</li>

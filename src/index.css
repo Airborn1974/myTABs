@@ -4,6 +4,21 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    width: 400px; /* Or a sensible default width like 380px */
+    height: 600px; /* Or a sensible default height */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrollbar if content overflows slightly */
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+    display: flex; /* Optional: if you want #root to be a flex container */
+    flex-direction: column; /* Optional: if #root is a flex container */
+  }
+  
   :root {
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;

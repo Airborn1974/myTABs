@@ -1,8 +1,12 @@
 #root {
+  /*
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  */
+  /* Styles for #root are now primarily controlled by src/index.css 
+     for popup sizing. Specific App layout styles can be added here if needed. */
 }
 
 .logo {
