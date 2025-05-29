@@ -1,6 +1,6 @@
-# Tab Flow Canvas
+# myTABs
 
-Tab Flow Canvas is a browser extension designed to help you organize your browser tabs, notes, and todos all in one place. It provides a Kanban-style visual workspace to manage your digital life efficiently.
+myTABs is a browser extension designed to help you organize your browser tabs, notes, and todos all in one place. It provides a Kanban-style visual workspace to manage your digital life efficiently.
 
 ## Core Features
 
@@ -39,52 +39,86 @@ Tab Flow Canvas is a browser extension designed to help you organize your browse
 
 ## Getting Started / Installation
 
-Tab Flow Canvas is a browser extension. To install it:
+myTABs is a browser extension. To install it:
 
-1.  **Build the extension:** If you have the source code, you'll first need to build the extension. Navigate to the project directory in your terminal and run `npm run build`. This will typically create a `dist` folder containing the necessary extension files.
-2.  **Enable Developer Mode:** Open your browser's extension management page (e.g., `chrome://extensions` for Chrome, `edge://extensions` for Edge, `about:addons` for Firefox).
-3.  **Load Unpacked:**
-    *   Enable "Developer mode" (often a toggle switch on the extensions page).
-    *   Click on "Load unpacked" (or a similar button).
-    *   Select the `dist` directory (or the main project folder if you are running the development server via `npm run dev`).
-4.  **Access the Extension:** Once installed, click on the Tab Flow Canvas icon in your browser's toolbar to open the popup and start organizing!
+1.  **Build the extension (for production/manual installation):**
+    *   Navigate to the project directory in your terminal and run `npm run build`.
+    *   This command creates an optimized build of the extension in a `dist` folder.
+2.  **Enable Developer Mode in your browser:**
+    *   Open your browser's extension management page (e.g., `chrome://extensions` for Chrome, `edge://extensions` for Edge, `about:addons` for Firefox).
+    *   Ensure "Developer mode" (often a toggle switch) is enabled.
+3.  **Load Unpacked - Production Build (`dist` folder):**
+    *   If you have run `npm run build` and want to install that version:
+    *   Click on "Load unpacked" (or a similar button like "Load Temporary Add-on").
+    *   Select the `dist` folder that was created by the build process.
+4.  **Access the Extension:** Once installed, click on the myTABs icon in your browser's toolbar to open the popup and start organizing!
+
+    *(For development, see the "Running Locally" section below for specific "Load unpacked" instructions when using `npm run dev`.)*
 
 ## Development
 
 ### Prerequisites
-*   Node.js (latest LTS version recommended)
-*   npm (comes with Node.js) or a compatible package manager like Yarn or pnpm.
+*   **Node.js:** This project relies on Node.js, which includes `npm` (Node Package Manager). Node.js is essential for installing project dependencies and running development scripts.
+    *   Download and install Node.js (latest LTS version recommended) from [https://nodejs.org/](https://nodejs.org/).
+*   `npm` (comes with Node.js) or a compatible package manager like Yarn or pnpm.
 
 ### Setup
 1.  **Clone the repository** (if you haven't already):
     ```sh
     git clone <repository_url> # Replace <repository_url> with the actual Git URL
-    cd tab-flow-canvas # Or your project's directory name
+    cd myTABs # Or your project's directory name
     ```
-2.  **Install dependencies:**
+2.  **Install project dependencies:**
     ```sh
     npm install
     ```
+    This command reads the `package.json` file and installs all necessary development tools and libraries for the project (like Vite) into a local `node_modules` folder. This step is crucial before you can run or build the project.
 
 ### Running Locally
 To start the development server, which typically builds the extension in watch mode:
 ```sh
 npm run dev
 ```
-This command, powered by Vite, compiles the extension and watches for file changes, automatically rebuilding the extension as you code. After starting the dev server, load the extension into your browser using the "Load unpacked" method, pointing to the main project directory (or the `dist` folder if specified by your Vite configuration). You may need to reload the extension in your browser's extension management page to see updates after code changes.
+This command, powered by Vite (or a similar tool), compiles the extension and watches for file changes. Vite handles the build process in memory and serves the necessary files for the extension to run.
+
+**Loading the extension in Development Mode (`npm run dev`):**
+1.  Ensure "Developer mode" is enabled in your browser's extension management page (see step 2 in "Getting Started / Installation").
+2.  Click on "Load unpacked".
+3.  Select the **root project directory** (the directory containing `package.json`, `vite.config.ts`, etc.). **Do not select the `dist` folder**, as Vite serves files from memory in this mode. The `dist` folder might not exist or might contain outdated code when `npm run dev` is active.
+4.  After making changes to the source code, Vite's Hot Module Replacement (HMR) will attempt to update the extension's UI. However, for some changes (especially in the manifest or background scripts), you may need to manually reload the extension from your browser's extension management page to see the updates.
 
 ### Building for Production
 To create a production-ready build of the extension:
 ```sh
 npm run build
 ```
-This command will generate an optimized version of the extension, usually in a `dist` folder. This `dist` folder is what you would typically use for "Load unpacked" for regular use or for packaging if you were to distribute the extension.
+This command uses Vite (installed locally to the project via `npm install`) to create an optimized version of the extension, usually in a `dist` folder. This `dist` folder is what you would typically use for "Load unpacked" for regular use or for packaging if you were to distribute the extension.
 
 ### Linting
 To check the codebase for code quality and style issues using ESLint:
 ```sh
 npm run lint
 ```
+
+## Troubleshooting
+
+### Error: 'vite' is not recognized as an internal or external command...
+*   **Cause:** This error means the project's dependencies (including Vite, the build tool) have not been installed yet.
+*   **Solution:** Navigate to the project's root directory in your terminal and run:
+    ```sh
+    npm install
+    ```
+    This will download and install all required packages.
+
+### Error: config.py not found (after trying to install Vite with pip)
+*   **Cause:** If you encounter an error like `'vite' is not recognized...` and then try to install Vite using Python's package manager (`pip install vite`), you are installing a *different tool* that also happens to be named Vite. This Python-based Vite tool is not used by this project and may look for a `config.py` file, leading to this error when you next run `npm run build`.
+*   **Solution:**
+    1.  Ensure you have installed project dependencies correctly using `npm install` as described above.
+    2.  (Recommended) Uninstall the incorrect Python `vite` package to avoid conflicts:
+        ```sh
+        pip uninstall vite
+        ```
+    3.  Then try `npm run build` again.
 
 ## Permissions Used
 
