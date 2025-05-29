@@ -80,7 +80,6 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <h1>DIAGNOSTIC MARKER - BUILD VERSION 777</h1>
       <Header onCreateNew={() => setIsCreateDialogOpen(true)} />
       <main className="flex-grow">
         {/* Action Buttons */}
