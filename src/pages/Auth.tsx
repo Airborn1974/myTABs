@@ -92,7 +92,7 @@ const Auth = () => {
     <div className="container flex items-center justify-center min-h-screen py-12">
       <Card className="mx-auto max-w-md w-full">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Tab Flow Canvas</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">myTABs</CardTitle>
           <CardDescription className="text-center">
             Sign in to your account or create a new one
           </CardDescription>
