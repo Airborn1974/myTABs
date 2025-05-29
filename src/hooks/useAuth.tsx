@@ -9,8 +9,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   authError: string | null;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithOtp: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -113,105 +112,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [toast]);
 
-  const signIn = async (email: string, password: string) => {
+  const signInWithOtp = async (email: string) => {
     try {
       setLoading(true);
       setAuthError(null);
-      cleanupAuthState();
-      
-      console.log("Attempting sign in for:", email);
-      
-      // Attempt global sign out first to clear any existing sessions
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        console.log("Pre-signout failed - continuing anyway");
-      }
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      
-      if (error) {
-        console.error("Sign in error:", error);
-        setAuthError(error.message);
-        toast({
-          title: "Sign in failed",
-          description: error.message,
-          variant: "destructive"
-        });
-        return { error };
-      }
-      
-      console.log("Sign in successful:", data.user?.email);
-      setAuthError(null);
-      return { error: null };
-    } catch (error: any) {
-      console.error("Unexpected sign in error:", error);
-      setAuthError(`Unexpected sign in error: ${error.message}`);
-      toast({
-        title: "Sign in error",
-        description: error.message,
-        variant: "destructive"
-      });
-      return { error };
-    } finally {
-      setLoading(false);
-    }
-  };
+      cleanupAuthState(); // Clean up previous session attempts
 
-  const signUp = async (email: string, password: string) => {
-    try {
-      setLoading(true);
-      setAuthError(null);
-      cleanupAuthState();
-      
-      console.log("Attempting sign up for:", email);
-      
-      const { data, error } = await supabase.auth.signUp({
+      console.log("Attempting OTP sign in for:", email);
+
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
         options: {
-          emailRedirectTo: window.location.origin
-        }
+          emailRedirectTo: window.location.origin, // Or your specific redirect URL
+        },
       });
-      
+
       if (error) {
-        console.error("Sign up error:", error);
+        console.error("OTP Sign in error:", error);
         setAuthError(error.message);
         toast({
-          title: "Sign up failed",
+          title: "Magic Link Error",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
         return { error };
       }
-      
-      console.log("Sign up successful:", data);
+
+      console.log("Magic link sent for:", email);
       setAuthError(null);
-      
-      // Provide clearer guidance based on email confirmation status
-      if (!data.session) {
-        toast({
-          title: "Sign up successful",
-          description: "Please check your email to confirm your account before signing in."
-        });
-      } else {
-        toast({
-          title: "Sign up successful",
-          description: "Your account has been created and you are now signed in!"
-        });
-      }
-      
+      toast({
+        title: "Magic Link Sent",
+        description: "Check your email for the magic link to sign in.",
+      });
       return { error: null };
     } catch (error: any) {
-      console.error("Unexpected sign up error:", error);
-      setAuthError(`Unexpected sign up error: ${error.message}`);
+      console.error("Unexpected OTP sign in error:", error);
+      setAuthError(`Unexpected OTP sign in error: ${error.message}`);
       toast({
-        title: "Sign up error",
+        title: "Error Sending Magic Link",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
       return { error };
     } finally {
@@ -257,8 +197,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     authError,
-    signIn,
-    signUp,
+    signInWithOtp,
     signOut,
   };
 

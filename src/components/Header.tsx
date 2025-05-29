@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
             <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
               <span className="text-white font-bold">TF</span>
             </div>
-            <h1 className="text-xl font-bold">Tab Flow Canvas</h1>
+            <h1 className="text-xl font-bold">myTABs</h1>
           </div>
         </div>
 

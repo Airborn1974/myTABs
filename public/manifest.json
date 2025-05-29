@@ -1,9 +1,9 @@
 
 {
   "manifest_version": 3,
-  "name": "Tab Flow Canvas",
+  "name": "myTABs",
   "version": "1.0.0",
-  "description": "Organize your browser tabs, notes, and todos in one place",
+  "description": "myTABs helps you organize your browser tabs, notes, and todos in one place",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -28,7 +28,7 @@
         "default": "Ctrl+Shift+S",
         "mac": "Command+Shift+S"
       },
-      "description": "Save the current tab to Tab Flow Canvas"
+      "description": "Save the current tab to myTABs"
     }
   }
 }
