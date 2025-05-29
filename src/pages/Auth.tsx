@@ -1,41 +1,35 @@
-
 import React, { useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth'; // Ensure this path is correct
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast'; // Ensure this path is correct
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, user, authError, loading } = useAuth();
+  // Updated to use signInWithOtp from useAuth
+  const { signInWithOtp, user, authError, loading } = useAuth(); 
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('signin');
-  const location = useLocation();
 
   console.log("Auth page - Loading:", loading, "User:", user ? "Logged in" : "Not logged in");
 
-  // Only redirect if we're not still loading and user exists
-  // Prevent redirect loop by checking we're truly logged in
   if (!loading && user) {
     console.log("Auth page - Redirecting to home because user is logged in");
     return <Navigate to="/" replace />;
   }
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignInWithOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!email) {
       toast({
-        title: "Error",
-        description: "Please enter both email and password",
+        title: "Email Required",
+        description: "Please enter your email address.",
         variant: "destructive",
       });
       return;
@@ -44,46 +38,26 @@ const Auth = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await signIn(email, password);
+      // Call the new signInWithOtp function
+      const { error } = await signInWithOtp(email); 
       
       if (!error) {
-        console.log("Sign in successful, redirecting...");
+        // Toast for success is handled within useAuth's signInWithOtp
+        console.log("Magic link request successful for:", email);
+      } else {
+        // Toast for error is handled within useAuth's signInWithOtp
+        console.error("Magic link request failed for:", email, error);
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !password) {
+    } catch (submissionError: any) {
+      // Catch any unexpected errors during the submission process itself
+      console.error("Unexpected error during magic link submission:", submissionError);
       toast({
-        title: "Error",
-        description: "Please enter both email and password",
+        title: "Submission Error",
+        description: submissionError.message || "An unexpected error occurred.",
         variant: "destructive",
       });
-      return;
-    }
-    
-    if (password.length < 6) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    try {
-      const { error } = await signUp(email, password);
-      
-      if (!error) {
-        setActiveTab('signin');
-      }
-    } finally {
+    } 
+    finally {
       setIsLoading(false);
     }
   };
@@ -92,15 +66,15 @@ const Auth = () => {
     <div className="container flex items-center justify-center min-h-screen py-12">
       <Card className="mx-auto max-w-md w-full">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Tab Flow Canvas</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">myTABs</CardTitle>
           <CardDescription className="text-center">
-            Sign in to your account or create a new one
+            Enter your email below to receive a magic link to sign in.
           </CardDescription>
         </CardHeader>
         
         {authError && (
-          <div className="px-6">
-            <Alert variant="destructive" className="mb-4">
+          <div className="px-6 pb-4"> {/* Added pb-4 for spacing if error shows */}
+            <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Authentication Error</AlertTitle>
               <AlertDescription>{authError}</AlertDescription>
@@ -108,81 +82,28 @@ const Auth = () => {
           </div>
         )}
         
-        <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 w-full">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="signin">
-            <form onSubmit={handleSignIn}>
-              <CardContent className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button type="submit" className="w-full" disabled={isLoading || loading}>
-                  {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
-              </CardFooter>
-            </form>
-          </TabsContent>
-          
-          <TabsContent value="signup">
-            <form onSubmit={handleSignUp}>
-              <CardContent className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Password must be at least 6 characters long
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button type="submit" className="w-full" disabled={isLoading || loading}>
-                  {isLoading ? "Creating account..." : "Sign Up"}
-                </Button>
-              </CardFooter>
-            </form>
-          </TabsContent>
-        </Tabs>
+        {/* Simplified form - Tabs and Sign Up content removed */}
+        <form onSubmit={handleSignInWithOtp}>
+          <CardContent className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading || loading} // Disable input while loading
+              />
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full" disabled={isLoading || loading}>
+              {isLoading ? "Sending..." : "Send Magic Link"}
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );
