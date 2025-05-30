@@ -24,8 +24,17 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     rollupOptions: {
+      input: {
+        main: 'index.html',
+        background: 'public/background.js'
+      },
       output: {
-        entryFileNames: 'assets/[name].js',
+        entryFileNames: (chunkInfo) => {
+          if (chunkInfo.name === 'background') {
+            return 'background.js'; // Output background.js to root
+          }
+          return 'assets/[name].js'; // Other JS entries to assets folder
+        },
         chunkFileNames: 'assets/[name].js',
         assetFileNames: 'assets/[name].[ext]'
       }

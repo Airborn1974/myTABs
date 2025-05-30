@@ -8,7 +8,8 @@ chrome.commands.onCommand.addListener((command) => {
 
 // Listen for extension icon click
 chrome.action.onClicked.addListener(() => {
-  saveCurrentTab();
+  const APP_PAGE = chrome.runtime.getURL("index.html");
+  chrome.tabs.create({ url: APP_PAGE });
 });
 
 // Function to save the current tab
