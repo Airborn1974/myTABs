@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth'; // Ensure this path is correct
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast'; // Ensure this path is correct
+import { useToast } from '@/hooks/use-toast';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  // Updated to use signInWithOtp from useAuth
-  const { signInWithOtp, user, authError, loading } = useAuth(); 
+  const { signInWithOtp, user, authError, loading } = useAuth();
   const { toast } = useToast();
 
   console.log("Auth page - Loading:", loading, "User:", user ? "Logged in" : "Not logged in");
@@ -38,18 +37,14 @@ const Auth = () => {
     setIsLoading(true);
     
     try {
-      // Call the new signInWithOtp function
-      const { error } = await signInWithOtp(email); 
+      const { error } = await signInWithOtp(email);
       
       if (!error) {
-        // Toast for success is handled within useAuth's signInWithOtp
         console.log("Magic link request successful for:", email);
       } else {
-        // Toast for error is handled within useAuth's signInWithOtp
         console.error("Magic link request failed for:", email, error);
       }
     } catch (submissionError: any) {
-      // Catch any unexpected errors during the submission process itself
       console.error("Unexpected error during magic link submission:", submissionError);
       toast({
         title: "Submission Error",
@@ -73,7 +68,7 @@ const Auth = () => {
         </CardHeader>
         
         {authError && (
-          <div className="px-6 pb-4"> {/* Added pb-4 for spacing if error shows */}
+          <div className="px-6 pb-4">
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Authentication Error</AlertTitle>
@@ -82,7 +77,6 @@ const Auth = () => {
           </div>
         )}
         
-        {/* Simplified form - Tabs and Sign Up content removed */}
         <form onSubmit={handleSignInWithOtp}>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -94,7 +88,7 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={isLoading || loading} // Disable input while loading
+                disabled={isLoading || loading}
               />
             </div>
           </CardContent>
