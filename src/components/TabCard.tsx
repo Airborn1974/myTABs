@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink, X, Bookmark, BookmarkCheck } from "lucide-react";
-import { Tab } from "@/hooks/useWorkspaceData";
+import { Tab } from "@/hooks/useWorkspace";
 import { useToast } from "@/hooks/use-toast";
 
 interface TabCardProps {

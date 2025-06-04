@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Note } from "@/hooks/useWorkspaceData";
+import { Note } from "@/hooks/useWorkspace";
 import { Pencil, Save, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
