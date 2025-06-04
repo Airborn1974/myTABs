@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import WorkspaceBoard from "@/components/WorkspaceBoard";
 import CreateItemDialog from "@/components/CreateItemDialog";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
-import useWorkspaceData, { ItemType, Group, Tab } from "@/hooks/useWorkspaceData";
+import { useWorkspace, ItemType, Group, Tab } from "@/hooks/useWorkspace";
 import TabCard from "@/components/TabCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookmarkCheck, LogOut } from "lucide-react";
@@ -18,7 +18,7 @@ const Index: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("");
-  const { data, addItem, addGroup, deleteItem, toggleBookmark, getBookmarkedTabs, isLoading } = useWorkspaceData();
+  const { data, addItem, addGroup, deleteItem, toggleBookmark, getBookmarkedTabs, isLoading } = useWorkspace();
   const { signOut, user } = useAuth();
 
   // Set default selected group if available

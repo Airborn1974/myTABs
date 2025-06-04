@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Group, ItemType, Tab, Note, TodoList } from "@/hooks/useWorkspaceData";
+import { Group, ItemType, Tab, Note, TodoList } from "@/hooks/useWorkspace";
 import { Link, ListChecks, StickyNote } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
