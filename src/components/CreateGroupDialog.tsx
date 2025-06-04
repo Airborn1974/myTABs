@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -73,7 +72,7 @@ const CreateGroupDialog: React.FC<CreateGroupDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Group</DialogTitle>
           <DialogDescription>
@@ -100,7 +99,9 @@ const CreateGroupDialog: React.FC<CreateGroupDialogProps> = ({
                   key={predefinedColor}
                   type="button"
                   className={`h-8 w-8 rounded-full ${
-                    color === predefinedColor ? "ring-2 ring-offset-2 ring-primary" : ""
+                    color === predefinedColor
+                      ? "ring-2 ring-offset-2 ring-primary"
+                      : ""
                   }`}
                   style={{ backgroundColor: predefinedColor }}
                   onClick={() => setColor(predefinedColor)}

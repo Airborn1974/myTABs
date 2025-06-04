@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -38,7 +37,9 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
   groups,
 }) => {
   const [activeTab, setActiveTab] = useState<ItemType>("tab");
-  const [selectedGroup, setSelectedGroup] = useState<string>(groups[0]?.id || "");
+  const [selectedGroup, setSelectedGroup] = useState<string>(
+    groups[0]?.id || "",
+  );
   const { toast } = useToast();
 
   // Tab fields
@@ -86,10 +87,13 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
 
         // Add basic URL validation
         let processedUrl = tabUrl;
-        if (!processedUrl.startsWith("http://") && !processedUrl.startsWith("https://")) {
+        if (
+          !processedUrl.startsWith("http://") &&
+          !processedUrl.startsWith("https://")
+        ) {
           processedUrl = "https://" + processedUrl;
         }
-        
+
         // Use URL as title if title is not provided
         const finalTitle = tabTitle || new URL(processedUrl).hostname;
 
@@ -98,7 +102,7 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
           title: finalTitle,
           url: processedUrl,
           groupId: selectedGroup,
-          bookmarked: false
+          bookmarked: false,
         };
 
         onCreateItem("tab", newTab);
@@ -167,7 +171,7 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Item</DialogTitle>
           <DialogDescription>
@@ -175,7 +179,11 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ItemType)} className="w-full">
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as ItemType)}
+          className="w-full"
+        >
           <TabsList className="grid grid-cols-3">
             <TabsTrigger value="tab" className="flex items-center gap-1">
               <Link className="h-4 w-4" />
@@ -190,13 +198,10 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
               <span>Todo</span>
             </TabsTrigger>
           </TabsList>
-          
+
           <div className="mt-4">
             <Label htmlFor="group-select">Group</Label>
-            <Select
-              value={selectedGroup}
-              onValueChange={setSelectedGroup}
-            >
+            <Select value={selectedGroup} onValueChange={setSelectedGroup}>
               <SelectTrigger id="group-select" className="w-full">
                 <SelectValue placeholder="Select a group" />
               </SelectTrigger>
@@ -212,7 +217,12 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
 
           <TabsContent value="tab" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="tab-title">Title <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Label htmlFor="tab-title">
+                Title{" "}
+                <span className="text-muted-foreground text-xs">
+                  (optional)
+                </span>
+              </Label>
               <Input
                 id="tab-title"
                 value={tabTitle}
@@ -221,7 +231,9 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tab-url">URL <span className="text-red-500">*</span></Label>
+              <Label htmlFor="tab-url">
+                URL <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="tab-url"
                 value={tabUrl}
@@ -234,7 +246,9 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
 
           <TabsContent value="note" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="note-title">Title <span className="text-red-500">*</span></Label>
+              <Label htmlFor="note-title">
+                Title <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="note-title"
                 value={noteTitle}
@@ -244,7 +258,12 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="note-content">Content <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Label htmlFor="note-content">
+                Content{" "}
+                <span className="text-muted-foreground text-xs">
+                  (optional)
+                </span>
+              </Label>
               <Textarea
                 id="note-content"
                 rows={5}
@@ -257,7 +276,9 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
 
           <TabsContent value="todo" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="todo-title">Title <span className="text-red-500">*</span></Label>
+              <Label htmlFor="todo-title">
+                Title <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="todo-title"
                 value={todoListTitle}
@@ -284,4 +305,3 @@ const CreateItemDialog: React.FC<CreateItemDialogProps> = ({
 };
 
 export default CreateItemDialog;
-
