@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Save, List } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BrowserService from "@/services/BrowserService";
-import useWorkspaceData from "@/hooks/useWorkspaceData";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ interface SaveCurrentTabButtonProps {
 
 const SaveCurrentTabButton: React.FC<SaveCurrentTabButtonProps> = ({ selectedGroup }) => {
   const { toast } = useToast();
-  const { data, addItem } = useWorkspaceData();
+  const { data, addItem } = useWorkspace();
   const [isLoading, setIsLoading] = useState(false);
   const [openTabs, setOpenTabs] = useState<Array<{
     id: number;

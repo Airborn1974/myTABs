@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BrowserService from "@/services/BrowserService";
-import useWorkspaceData from "@/hooks/useWorkspaceData";
+import { useWorkspace } from "@/hooks/useWorkspace";
 
 interface ImportTabsButtonProps {
   selectedGroup: string;
@@ -12,7 +12,7 @@ interface ImportTabsButtonProps {
 
 const ImportTabsButton: React.FC<ImportTabsButtonProps> = ({ selectedGroup }) => {
   const { toast } = useToast();
-  const { addItem } = useWorkspaceData();
+  const { addItem } = useWorkspace();
 
   const handleImportTabs = async () => {
     try {

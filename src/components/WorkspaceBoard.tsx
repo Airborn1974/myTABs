@@ -3,7 +3,7 @@ import React from "react";
 import TabGroup from "./TabGroup";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import useWorkspaceData, { Group, Note, Tab, TodoList } from "@/hooks/useWorkspaceData";
+import { useWorkspace, Group, Note, Tab, TodoList } from "@/hooks/useWorkspace";
 
 interface WorkspaceBoardProps {
   onCreateGroup: () => void;
@@ -11,11 +11,11 @@ interface WorkspaceBoardProps {
 }
 
 const WorkspaceBoard: React.FC<WorkspaceBoardProps> = ({ onCreateGroup, groups = [] }) => {
-  const { 
-    data, 
-    deleteItem, 
-    updateItem 
-  } = useWorkspaceData();
+  const {
+    data,
+    deleteItem,
+    updateItem
+  } = useWorkspace();
   
   // Use the groups prop if provided, otherwise fall back to data.groups
   const displayGroups = groups.length > 0 ? groups : data.groups;

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { TodoItem, TodoList } from "@/hooks/useWorkspaceData";
+import { TodoItem, TodoList } from "@/hooks/useWorkspace";
 import { Button } from "@/components/ui/button";
 import { Pencil, Plus, Save, Trash2, X } from "lucide-react";
 

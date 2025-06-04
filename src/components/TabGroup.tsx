@@ -4,9 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TabCard from "./TabCard";
 import NoteCard from "./NoteCard";
 import { Badge } from "@/components/ui/badge";
-import { Tab, Note, TodoList, Group } from "@/hooks/useWorkspaceData";
+import { useWorkspace, Tab, Note, TodoList, Group } from "@/hooks/useWorkspace";
 import TodoListComponent from "./TodoListComponent";
-import useWorkspaceData from "@/hooks/useWorkspaceData";
 
 interface TabGroupProps {
   group: Group;
@@ -32,7 +31,7 @@ const TabGroup: React.FC<TabGroupProps> = ({
   onDeleteTodoList
 }) => {
   const groupColor = group.color || "#4f46e5";
-  const { toggleBookmark } = useWorkspaceData();
+  const { toggleBookmark } = useWorkspace();
   
   return (
     <div className="flex flex-col gap-4 kanban-column">

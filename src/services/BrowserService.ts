@@ -1,5 +1,5 @@
 
-import { Tab } from "@/hooks/useWorkspaceData";
+import { Tab } from "@/hooks/useWorkspace";
 
 interface ChromeTab {
   id: number;
