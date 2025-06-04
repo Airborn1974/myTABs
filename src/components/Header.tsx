@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="flex h-16 items-center justify-between w-full">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
@@ -33,9 +32,9 @@ const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button 
+          <Button
             onClick={handleSyncClick}
-            variant="ghost" 
+            variant="ghost"
             className="text-muted-foreground hover:text-foreground"
           >
             Sync
@@ -46,7 +45,12 @@ const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
               Create New
             </Button>
           )}
-          <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground"
+          >
             <Link to="/help" title="Help">
               <HelpCircle className="h-5 w-5" />
               <span className="sr-only">Help</span>

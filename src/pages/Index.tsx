@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import WorkspaceBoard from "@/components/WorkspaceBoard";
@@ -18,7 +17,15 @@ const Index: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("");
-  const { data, addItem, addGroup, deleteItem, toggleBookmark, getBookmarkedTabs, isLoading } = useWorkspace();
+  const {
+    data,
+    addItem,
+    addGroup,
+    deleteItem,
+    toggleBookmark,
+    getBookmarkedTabs,
+    isLoading,
+  } = useWorkspace();
   const { signOut, user } = useAuth();
 
   // Set default selected group if available
@@ -36,7 +43,7 @@ const Index: React.FC = () => {
     const newGroup: Group = {
       id: `group-${Date.now()}`,
       title,
-      color
+      color,
     };
     addGroup(newGroup);
     setIsCreateGroupDialogOpen(false); // Close dialog after creation
@@ -53,12 +60,12 @@ const Index: React.FC = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <Header onCreateNew={() => setIsCreateDialogOpen(true)} />
         <main className="flex-grow p-6">
-          <div className="container">
+          <div className="w-full">
             <div className="flex justify-between items-center mb-6">
               <Skeleton className="h-10 w-48" />
               <Skeleton className="h-10 w-36" />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <Card key={i} className="border-t-4 border-t-gray-300">
@@ -83,21 +90,21 @@ const Index: React.FC = () => {
       <Header onCreateNew={() => setIsCreateDialogOpen(true)} />
       <main className="flex-grow">
         {/* Action Buttons */}
-        <div className="container pt-6 flex flex-wrap gap-2 justify-between">
+        <div className="w-full pt-6 flex flex-wrap gap-2 justify-between">
           <div className="flex gap-2 flex-wrap">
             <SaveCurrentTabButton selectedGroup={selectedGroup} />
             <ImportTabsButton selectedGroup={selectedGroup} />
           </div>
-          
+
           <div className="flex items-center gap-2">
             {user && (
               <span className="text-sm text-muted-foreground">
                 {user.email}
               </span>
             )}
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => signOut()}
               title="Sign out"
               className="gap-1"
@@ -110,7 +117,7 @@ const Index: React.FC = () => {
 
         {/* Bookmarked Tabs Section */}
         {bookmarkedTabs.length > 0 && (
-          <div className="container py-6">
+          <div className="w-full py-6">
             <Card className="border-t-4 border-t-amber-500 mb-6">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg font-semibold flex items-center">
@@ -131,9 +138,9 @@ const Index: React.FC = () => {
             </Card>
           </div>
         )}
-        
-        <WorkspaceBoard 
-          onCreateGroup={() => setIsCreateGroupDialogOpen(true)} 
+
+        <WorkspaceBoard
+          onCreateGroup={() => setIsCreateGroupDialogOpen(true)}
           groups={data.groups} // Pass groups data directly
         />
       </main>

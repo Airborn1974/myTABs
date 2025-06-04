@@ -1,24 +1,22 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html, body {
-    width: 400px; /* Or a sensible default width like 380px */
-    height: 600px; /* Or a sensible default height */
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scrollbar if content overflows slightly */
-  }
-
+  html,
+  body,
   #root {
     width: 100%;
     height: 100%;
-    display: flex; /* Optional: if you want #root to be a flex container */
-    flex-direction: column; /* Optional: if #root is a flex container */
+    margin: 0;
+    padding: 0;
   }
-  
+
+  #root {
+    display: flex;
+    flex-direction: column;
+  }
+
   :root {
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
@@ -93,7 +91,9 @@
 }
 
 .card-shadow {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .card-hover {
@@ -102,9 +102,15 @@
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .kanban-column {
   min-height: 500px;
+}
+
+.container {
+  max-width: none !important;
 }

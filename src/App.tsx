@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -21,20 +20,23 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
-        {/* Original for reference:
+      <div className="min-h-screen w-full flex flex-col">
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          {/* Original for reference:
         <Route path="/" element={
           <ProtectedRoute>
             <Index />
           </ProtectedRoute>
         } />
         */}
-        <Route path="/" element={<Index />} /> {/* Temporarily bypass ProtectedRoute */}
-        <Route path="/help" element={<Help />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Toaster />
+          <Route path="/" element={<Index />} />{" "}
+          {/* Temporarily bypass ProtectedRoute */}
+          <Route path="/help" element={<Help />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );
