@@ -86,7 +86,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    /* Provide padding on the edges so content doesn't touch the browser window */
+    @apply bg-background text-foreground px-4;
   }
 }
 
