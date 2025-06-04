@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Help from "./pages/Help";
+import Manage from "./pages/Manage";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/" element={<Index />} />{" "}
           {/* Temporarily bypass ProtectedRoute */}
           <Route path="/help" element={<Help />} />
+          <Route path="/manage" element={<Manage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />

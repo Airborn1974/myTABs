@@ -1,7 +1,7 @@
 import React from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Plus, HelpCircle } from "lucide-react";
+import { Plus, HelpCircle, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
@@ -45,6 +45,17 @@ const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
               Create New
             </Button>
           )}
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Link to="/manage" title="Manage">
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Manage</span>
+            </Link>
+          </Button>
           <Button
             asChild
             variant="ghost"
