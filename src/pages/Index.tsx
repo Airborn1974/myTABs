@@ -12,11 +12,15 @@ import ImportTabsButton from "@/components/ImportTabsButton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useToast } from "@/hooks/use-toast";
+import { useSaveActiveTab } from "@/hooks/useSaveActiveTab"; // Import the new hook
 
 const Index: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("");
+  const { toast } = useToast();
   const {
     data,
     addItem,
@@ -27,6 +31,24 @@ const Index: React.FC = () => {
     isLoading,
   } = useWorkspace();
   const { signOut, user } = useAuth();
+  const { saveActiveTab } = useSaveActiveTab();
+
+  // Shortcut for Add New Group
+  useHotkeys("mod+shift+g", (event) => {
+    event.preventDefault();
+    setIsCreateGroupDialogOpen(true);
+    toast({
+      title: "Action Triggered",
+      description: "Create New Group dialog opened via shortcut.",
+    });
+  }, { preventDefault: true }, [setIsCreateGroupDialogOpen, toast]);
+
+  // Shortcut for Save Current Tab
+  useHotkeys("mod+shift+s", (event) => {
+    event.preventDefault();
+    saveActiveTab(selectedGroup || (data.groups.length > 0 ? data.groups[0].id : undefined));
+    // Toast is handled within saveActiveTab hook
+  }, { preventDefault: true }, [saveActiveTab, selectedGroup, data.groups]);
 
   // Set default selected group if available
   React.useEffect(() => {
