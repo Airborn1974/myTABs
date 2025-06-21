@@ -1,0 +1,42 @@
+name: LoopLogic CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint || true
+
+      - name: Run tests (if present)
+        run: |
+          if [ -f package.json ] && jq '.scripts.test' package.json | grep -qv null; then
+            npm test
+          else
+            echo "No test script found, skipping tests."
+          fi
+
+      - name: Check required files exist
+        run: |
+          required_files=(README.md PLANNING.md TASK.md CONTRIBUTING.md .env.local.template manifest.json)
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Missing required file: $file" && exit 1
+            fi
+          done
