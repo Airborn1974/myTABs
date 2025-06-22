@@ -6,6 +6,7 @@ import Index from "./pages/Index";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import TabManagementPage from "./pages/TabManagementPage"; // Import the new page
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient({
@@ -32,6 +33,7 @@ const App = () => (
         */}
           <Route path="/" element={<Index />} />{" "}
           {/* Temporarily bypass ProtectedRoute */}
+          <Route path="/settings/tabs" element={<TabManagementPage />} /> {/* Add new route */}
           <Route path="/help" element={<Help />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

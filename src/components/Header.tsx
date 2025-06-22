@@ -1,9 +1,10 @@
 import React from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Plus, HelpCircle } from "lucide-react";
+import { Plus, HelpCircle, Settings } from "lucide-react"; // Added Settings icon
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useHotkeys } from "react-hotkeys-hook"; // Added useHotkeys
 
 interface HeaderProps {
   onCreateNew?: () => void;
@@ -11,6 +12,17 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Shortcut for opening Tab Management Page
+  useHotkeys("mod+shift+t", (event) => {
+    event.preventDefault();
+    navigate("/settings/tabs");
+    toast({
+      title: "Navigated",
+      description: "Opened Tab Management page.",
+    });
+  }, { preventDefault: true });
 
   const handleSyncClick = () => {
     toast({
@@ -45,6 +57,17 @@ const Header: React.FC<HeaderProps> = ({ onCreateNew }) => {
               Create New
             </Button>
           )}
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Link to="/settings/tabs" title="Settings">
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Settings</span>
+            </Link>
+          </Button>
           <Button
             asChild
             variant="ghost"

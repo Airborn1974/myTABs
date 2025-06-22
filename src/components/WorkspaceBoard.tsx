@@ -11,11 +11,12 @@ interface WorkspaceBoardProps {
 
 const WorkspaceBoard: React.FC<WorkspaceBoardProps> = ({
   onCreateGroup,
-  groups = [],
+  groups = [], // This prop seems to be for a filtered view, actual data comes from useWorkspace
 }) => {
-  const { data, deleteItem, updateItem } = useWorkspace();
+  const { data, deleteItem, updateItem, moveItem, updateGroup, deleteGroup } = useWorkspace();
 
-  // Use the groups prop if provided, otherwise fall back to data.groups
+  // Use the groups prop if provided for a specific filtered view, otherwise fall back to all data.groups
+  // For the purpose of TabGroup needing all groups for moving, we should always pass data.groups from context
   const displayGroups = groups.length > 0 ? groups : data.groups;
 
   const handleDeleteTab = (tabId: string) => {
@@ -71,11 +72,17 @@ const WorkspaceBoard: React.FC<WorkspaceBoardProps> = ({
             tabs={getTabsForGroup(group.id)}
             notes={getNotesForGroup(group.id)}
             todoLists={getTodoListsForGroup(group.id)}
+            allGroups={data.groups} // Pass all groups from the workspace
             onDeleteTab={handleDeleteTab}
             onUpdateNote={handleUpdateNote}
             onDeleteNote={handleDeleteNote}
             onUpdateTodoList={handleUpdateTodoList}
             onDeleteTodoList={handleDeleteTodoList}
+            onRenameGroup={(groupId, newTitle) => updateGroup(groupId, { title: newTitle })}
+            onDeleteGroup={deleteGroup}
+            onMoveTab={(itemId, newGroupId) => moveItem("tab", itemId, newGroupId)}
+            onMoveNote={(itemId, newGroupId) => moveItem("note", itemId, newGroupId)}
+            onMoveTodoList={(itemId, newGroupId) => moveItem("todo", itemId, newGroupId)}
           />
         ))}
       </div>

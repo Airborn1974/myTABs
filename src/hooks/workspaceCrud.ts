@@ -162,19 +162,55 @@ export const updateWorkspaceGroup = async (
 };
 
 export const deleteWorkspaceGroup = async (
-  id: string,
+  groupId: string,
+  data: WorkspaceData, // Add data to access items
   setData: React.Dispatch<React.SetStateAction<WorkspaceData>>,
   userId?: string
 ) => {
   // Update local state first
-  setData(prev => ({ ...prev, groups: prev.groups.filter(group => group.id !== id) }));
+  setData(prev => {
+    const updatedTabs = prev.tabs.filter(tab => tab.groupId !== groupId);
+    const updatedNotes = prev.notes.filter(note => note.groupId !== groupId);
+    const updatedTodoLists = prev.todoLists.filter(list => list.groupId !== groupId);
+    const updatedGroups = prev.groups.filter(group => group.id !== groupId);
+
+    return {
+      ...prev,
+      tabs: updatedTabs,
+      notes: updatedNotes,
+      todoLists: updatedTodoLists,
+      groups: updatedGroups,
+    };
+  });
   
   // Then delete from Supabase if user is authenticated
   if (userId) {
     try {
-      await deleteGroupFromSupabase(id);
+      // Important: 'data' here is the workspace state *before* this function's local optimistic update.
+      // This is necessary to correctly identify all items associated with the groupId for deletion from Supabase.
+      const itemsToDeletePromises: Promise<any>[] = [];
+      data.tabs.forEach(tab => {
+        if (tab.groupId === groupId) {
+          itemsToDeletePromises.push(deleteItemFromSupabase("tab", tab.id));
+        }
+      });
+      data.notes.forEach(note => {
+        if (note.groupId === groupId) {
+          itemsToDeletePromises.push(deleteItemFromSupabase("note", note.id));
+        }
+      });
+      data.todoLists.forEach(todoList => {
+        if (todoList.groupId === groupId) {
+          itemsToDeletePromises.push(deleteItemFromSupabase("todo", todoList.id));
+        }
+      });
+
+      await Promise.all(itemsToDeletePromises);
+
+      // Then delete the group itself from Supabase
+      await deleteGroupFromSupabase(groupId);
     } catch (error) {
-      handleSupabaseError(error, "deleting group");
+      handleSupabaseError(error, "deleting group and its items");
     }
   }
 };
