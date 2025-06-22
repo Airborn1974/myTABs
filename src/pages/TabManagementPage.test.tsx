@@ -46,8 +46,23 @@ jest.mock('@/hooks/useWorkspace', () => ({
 // jest.mock('@/components/ui/dropdown-menu', () => ({
 //   ...jest.requireActual('@/components/ui/dropdown-menu'),
 // }));
-// jest.mock('@/components/ui/button', () => ({
+// jest.mock('@/components/ui/button', () => ({ // Not needed for now
 //   ...jest.requireActual('@/components/ui/button'),
+// }));
+
+// Mock EditTabDialog to verify props and control its behavior if needed
+// For this test, we'll mostly interact with it as a black box,
+// but ensure it's "opened" by checking state or a unique element from it.
+// Actual EditTabDialog functionality is tested in EditTabDialog.test.tsx.
+// jest.mock('@/components/EditTabDialog', () => jest.fn((props) => {
+//   if (!props.open) return null;
+//   return (
+//     <div data-testid="mock-edit-tab-dialog">
+//       <span>Dialog Open for {props.tab?.title}</span>
+//       <button onClick={() => props.onSave(props.tab.id, 'New Mock Title', 'http://newmock.com')}>Mock Save</button>
+//       <button onClick={() => props.onOpenChange(false)}>Mock Cancel</button>
+//     </div>
+//   );
 // }));
 
 
@@ -58,8 +73,8 @@ describe('TabManagementPage', () => {
     mockUpdateItem.mockClear();
     (useWorkspace as jest.Mock).mockImplementation(() => ({
         data: {
-            tabs: mockTabs,
-            groups: mockGroups,
+            tabs: [...mockTabs], // Use copies to avoid issues if tests modify data
+            groups: [...mockGroups],
             notes: [],
             todoLists: [],
         } as WorkspaceData,
@@ -68,11 +83,12 @@ describe('TabManagementPage', () => {
         updateItem: mockUpdateItem,
         moveItem: mockMoveItem,
     }));
+    mockToast.mockClear(); // Clear toast mock from useToast
   });
 
   test('renders loading state initially', () => {
     (useWorkspace as jest.Mock).mockImplementationOnce(() => ({
-      data: initialWorkspaceData, // Or an empty state
+      data: initialWorkspaceData,
       isLoading: true,
       deleteItem: mockDeleteItem,
       updateItem: mockUpdateItem,
@@ -86,7 +102,6 @@ describe('TabManagementPage', () => {
     render(<TabManagementPage />);
     expect(screen.getByRole('heading', { name: /Tab Management/i })).toBeInTheDocument();
 
-    // Check for table headers
     expect(screen.getByText('Title')).toBeInTheDocument();
     expect(screen.getByText('URL')).toBeInTheDocument();
     expect(screen.getByText('Group')).toBeInTheDocument();

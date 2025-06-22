@@ -13,6 +13,7 @@ myTABs is a browser extension designed to help you organize your browser tabs, n
 *   **Save Tabs:** Save currently open browser tabs, capturing their title, URL, and favicon.
 *   **Open Tabs:** Quickly open saved tabs in your browser.
 *   **Bookmarking:** Mark important tabs as "bookmarked" for quick access via a dedicated "Bookmarks" section.
+    *   **Edit Tab Details:** Users can now edit the title and URL of saved tabs.
 *   **Save Current Tab:** A dedicated button or feature to quickly save the active browser tab to your workspace.
 *   **Import Tabs:** Feature to import multiple currently open tabs into a selected group.
 

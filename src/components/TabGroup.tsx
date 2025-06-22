@@ -22,8 +22,9 @@ import TabCard from "./TabCard";
 import NoteCard from "./NoteCard";
 import { Badge } from "@/components/ui/badge";
 import { useWorkspace, Tab, Note, TodoList, Group } from "@/hooks/useWorkspace";
-import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { useToast } from "@/hooks/use-toast";
 import TodoListComponent from "./TodoListComponent";
+import EditTabDialog from "./EditTabDialog"; // Import EditTabDialog
 
 interface TabGroupProps {
   group: Group;
@@ -41,6 +42,8 @@ interface TabGroupProps {
   onMoveTab: (itemId: string, newGroupId: string) => void;
   onMoveNote: (itemId: string, newGroupId: string) => void;
   onMoveTodoList: (itemId: string, newGroupId: string) => void;
+  // updateItem prop might be needed if not using useWorkspace directly here.
+  // For now, assuming useWorkspace is used as it's already imported.
 }
 
 const TabGroup: React.FC<TabGroupProps> = ({
@@ -61,16 +64,38 @@ const TabGroup: React.FC<TabGroupProps> = ({
   onMoveTodoList,
 }) => {
   const groupColor = group.color || "#4f46e5";
-  const { toggleBookmark } = useWorkspace(); // Re-added for TabCard
+  const { toggleBookmark, updateItem } = useWorkspace(); // Destructure updateItem
+  const { toast } = useToast(); // Initialize useToast
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState(group.title);
 
+  const [isEditTabDialogOpen, setIsEditTabDialogOpen] = useState(false);
+  const [editingTab, setEditingTab] = useState<Tab | null>(null);
+
   const otherGroups = allGroups.filter(g => g.id !== group.id);
+
+  const handleOpenEditTabDialog = (tab: Tab) => {
+    setEditingTab(tab);
+    setIsEditTabDialogOpen(true);
+  };
+
+  const handleSaveEditedTab = (tabId: string, newTitle: string, newUrl: string) => {
+    updateItem('tab', tabId, { title: newTitle, url: newUrl });
+    toast({
+      title: "Tab Updated",
+      description: `"${newTitle}" has been updated successfully.`,
+    });
+    // Dialog closing is handled by its onOpenChange, which also clears editingTab
+  };
 
   const handleRenameGroup = () => {
     if (newGroupName.trim() === "") {
-      // TODO: Show a toast or error message for empty name
+      toast({ // Re-add toast logic for empty group name
+        variant: "destructive",
+        title: "Rename Failed",
+        description: "Group name cannot be empty.",
+      });
       return;
     }
     onRenameGroup(group.id, newGroupName.trim());
@@ -124,8 +149,9 @@ const TabGroup: React.FC<TabGroupProps> = ({
               tab={tab}
               groups={otherGroups}
               onDelete={() => onDeleteTab(tab.id)}
-              onToggleBookmark={() => toggleBookmark(tab.id)} // Passed down
+              onToggleBookmark={() => toggleBookmark(tab.id)}
               onMoveItem={(newGroupId) => onMoveTab(tab.id, newGroupId)}
+              onEdit={handleOpenEditTabDialog} // Pass the handler
             />
           ))}
 
@@ -192,6 +218,19 @@ const TabGroup: React.FC<TabGroupProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Tab Dialog */}
+      <EditTabDialog
+        open={isEditTabDialogOpen}
+        onOpenChange={(isOpen) => {
+          setIsEditTabDialogOpen(isOpen);
+          if (!isOpen) {
+            setEditingTab(null); // Clear editing tab when dialog closes
+          }
+        }}
+        tab={editingTab}
+        onSave={handleSaveEditedTab}
+      />
     </div>
   );
 };

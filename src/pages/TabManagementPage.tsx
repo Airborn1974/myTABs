@@ -16,13 +16,19 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
-// TODO: Add Dialog components for editing tab details if needed
+import EditTabDialog from '@/components/EditTabDialog'; // Import EditTabDialog
+import { Tab } from '@/hooks/useWorkspace'; // Ensure Tab type is imported
+import { useToast } from '@/hooks/use-toast'; // Import useToast
 
 const TabManagementPage: React.FC = () => {
   const { data, isLoading, deleteItem, updateItem, moveItem } = useWorkspace();
   const { tabs, groups } = data;
+  const { toast } = useToast(); // Initialize useToast
 
-  // TODO: Add state for selected tabs, filters, sorting, edit dialog
+  const [isEditTabDialogOpen, setIsEditTabDialogOpen] = React.useState(false);
+  const [editingTab, setEditingTab] = React.useState<Tab | null>(null);
+
+  // TODO: Add state for selected tabs, filters, sorting
   // const [selectedTabs, setSelectedTabs] = React.useState<string[]>([]);
   // const [filterGroup, setFilterGroup] = React.useState<string>('');
   // const [searchTerm, setSearchTerm] = React.useState<string>('');
@@ -43,10 +49,19 @@ const TabManagementPage: React.FC = () => {
     deleteItem('tab', tabId);
   };
 
-  // TODO: Implement edit tab functionality
-  // const handleEditTab = (tabId: string, newDetails: Partial<Tab>) => {
-  //   updateItem('tab', tabId, newDetails);
-  // };
+  const handleOpenEditDialog = (tab: Tab) => {
+    setEditingTab(tab);
+    setIsEditTabDialogOpen(true);
+  };
+
+  const handleSaveEditedTab = (tabId: string, newTitle: string, newUrl: string) => {
+    updateItem('tab', tabId, { title: newTitle, url: newUrl });
+    toast({
+      title: "Tab Updated",
+      description: `"${newTitle}" has been successfully updated.`,
+    });
+    // Dialog closing is handled by its onOpenChange, which also clears editingTab
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-6">
@@ -119,7 +134,7 @@ const TabManagementPage: React.FC = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => alert('Edit functionality to be implemented for tab: ' + tab.title)}>
+                          <DropdownMenuItem onClick={() => handleOpenEditDialog(tab)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
@@ -161,6 +176,18 @@ const TabManagementPage: React.FC = () => {
           </TableBody>
         </Table>
       </div>
+
+      <EditTabDialog
+        open={isEditTabDialogOpen}
+        onOpenChange={(isOpen) => {
+          setIsEditTabDialogOpen(isOpen);
+          if (!isOpen) {
+            setEditingTab(null);
+          }
+        }}
+        tab={editingTab}
+        onSave={handleSaveEditedTab}
+      />
     </div>
   );
 };

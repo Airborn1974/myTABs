@@ -12,21 +12,22 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Bookmark, BookmarkCheck, MoreVertical, Trash2, MoveRight } from "lucide-react";
-import { Tab, Group } from "@/hooks/useWorkspace"; // Added Group
+import { ExternalLink, Bookmark, BookmarkCheck, MoreVertical, Trash2, MoveRight, Edit } from "lucide-react"; // Added Edit icon
+import { Tab, Group } from "@/hooks/useWorkspace";
 import { useToast } from "@/hooks/use-toast";
 
 interface TabCardProps {
   tab: Tab;
-  groups: Group[]; // List of all groups for moving
+  groups: Group[];
   onDelete: () => void;
   onToggleBookmark?: () => void;
-  onMoveItem: (newGroupId: string) => void; // Function to move the item
+  onMoveItem: (newGroupId: string) => void;
+  onEdit: (tab: Tab) => void; // New prop for requesting edit
 }
 
-const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookmark, onMoveItem }) => {
+const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookmark, onMoveItem, onEdit }) => {
   const defaultFavicon = "/placeholder.svg";
-  const { toast } = useToast();
+  const { toast } = useToast(); // toast is not used in this component currently, can be removed if not planned
 
   const handleBookmarkClick = () => {
     if (onToggleBookmark) {
@@ -98,6 +99,10 @@ const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookma
                   {tab.bookmarked ? "Remove Bookmark" : "Add Bookmark"}
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem onClick={() => onEdit(tab)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Tab
+              </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <MoveRight className="mr-2 h-4 w-4" />
