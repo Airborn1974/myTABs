@@ -24,7 +24,8 @@ import {
   updateWorkspaceGroup,
   deleteWorkspaceGroup,
   moveWorkspaceItem,
-  toggleWorkspaceBookmark
+  toggleWorkspaceBookmark,
+  reorderWorkspaceGroups // Added reorderWorkspaceGroups
 } from "./workspaceCrud";
 
 const useWorkspaceData = () => {
@@ -175,6 +176,10 @@ const useWorkspaceData = () => {
     await toggleWorkspaceBookmark(tabId, data, setData, user?.id);
   };
 
+  const reorderGroups = async (oldIndex: number, newIndex: number) => {
+    await reorderWorkspaceGroups(oldIndex, newIndex, setData, user?.id);
+  };
+
   // Get all bookmarked tabs
   const getBookmarkedTabs = (): Tab[] => {
     return data.tabs.filter(tab => tab.bookmarked);
@@ -191,6 +196,7 @@ const useWorkspaceData = () => {
     deleteGroup,
     moveItem,
     toggleBookmark,
+    reorderGroups, // Added reorderGroups
     getBookmarkedTabs,
   };
 };
