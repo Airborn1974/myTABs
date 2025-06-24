@@ -3,11 +3,26 @@
 `myTABs` is a Chromium-based extension that turns your new tab into a structured dashboard for tab groups, notes, and reminders — with optional Supabase backup and mobile sync.
 
 ## 🚀 Features
-- 📂 Organize tabs into visual groups
-- 📝 Add notes and task lists per group
-- 🔔 Set reminders via Chrome notifications
-- 📥 Save open tabs to groups (via modal or shortcut)
-- 📁 Optional Supabase sync for backup and mobile
+- 📂 **Organize with Groups:**
+    - Create, rename, and delete visual groups for your tabs, notes, and to-do lists.
+    - Reorder groups using drag-and-drop on your main workspace board.
+    - Each group can have a distinct color for better visual organization.
+- 📑 **Manage Tabs Efficiently:**
+    - Save open browser tabs to specific groups.
+    - Rename saved tabs for clarity.
+    - Move tabs between different groups.
+    - Delete unneeded tabs.
+    - Access these actions from individual Tab Cards or the dedicated Tab Management page.
+- 📝 **Notes and To-Dos:**
+    - Add rich notes and trackable to-do lists within each group.
+    - (Note: Management features like renaming/moving for notes and to-do lists are also available but not detailed here for brevity).
+- 🔔 **Reminders:**
+    - Set reminders for important tasks or links (via Chrome notifications).
+- 📥 **Quick Save:**
+    - Easily save your currently active tab to a chosen group using a modal or keyboard shortcuts.
+- ☁️ **Cloud Sync (Optional):**
+    - Back up your workspace (groups, tabs, notes, to-dos) to Supabase.
+    - Enable cross-device synchronization and access via a potential mobile viewer.
 
 ## 🧱 Tech Stack
 - Manifest v3 Chrome Extension

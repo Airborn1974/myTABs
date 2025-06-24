@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"; // Added useCallback
 import { useAuth } from "./useAuth";
 import { 
   WorkspaceData, 
@@ -24,7 +24,8 @@ import {
   updateWorkspaceGroup,
   deleteWorkspaceGroup,
   moveWorkspaceItem,
-  toggleWorkspaceBookmark
+  toggleWorkspaceBookmark,
+  reorderWorkspaceGroups // Added reorderWorkspaceGroups
 } from "./workspaceCrud";
 
 const useWorkspaceData = () => {
@@ -143,39 +144,45 @@ const useWorkspaceData = () => {
   }, [data.groups, addItem, addGroup]); // addGroup and data.groups are dependencies for NEW_GROUP logic
 
   // Wrapper functions that provide a clean API but use the extracted CRUD functions
-  const addItem = async (type: ItemType, item: any) => {
+  const addItem = useCallback(async (type: ItemType, item: any) => {
     await addWorkspaceItem(type, item, data, setData, user?.id);
-  };
+  }, [data, setData, user]);
 
-  const updateItem = async (type: ItemType, id: string, updates: Partial<Tab | Note | TodoList>) => {
+  const updateItem = useCallback(async (type: ItemType, id: string, updates: Partial<Tab | Note | TodoList>) => {
     await updateWorkspaceItem(type, id, updates, data, setData, user?.id);
-  };
+  }, [data, setData, user]);
 
-  const deleteItem = async (type: ItemType, id: string) => {
+  const deleteItem = useCallback(async (type: ItemType, id: string) => {
     await deleteWorkspaceItem(type, id, setData, user?.id);
-  };
+  }, [setData, user]);
 
-  const addGroup = async (group: Group) => {
+  const addGroup = useCallback(async (group: Group) => {
     await addWorkspaceGroup(group, setData, user?.id);
-  };
+  }, [setData, user]);
 
-  const updateGroup = async (id: string, updates: Partial<Group>) => {
+  const updateGroup = useCallback(async (id: string, updates: Partial<Group>) => {
     await updateWorkspaceGroup(id, updates, setData, user?.id);
-  };
+  }, [setData, user]);
 
-  const deleteGroup = async (id: string) => {
+  const deleteGroup = useCallback(async (id: string) => {
     await deleteWorkspaceGroup(id, data, setData, user?.id); // Pass data here
-  };
+  }, [data, setData, user]);
 
-  const moveItem = async (type: ItemType, id: string, newGroupId: string) => {
+  const moveItem = useCallback(async (type: ItemType, id: string, newGroupId: string) => {
     await moveWorkspaceItem(type, id, newGroupId, setData, user?.id);
-  };
+  }, [setData, user]);
 
-  const toggleBookmark = async (tabId: string) => {
+  const toggleBookmark = useCallback(async (tabId: string) => {
     await toggleWorkspaceBookmark(tabId, data, setData, user?.id);
-  };
+  }, [data, setData, user]);
+
+  const reorderGroups = useCallback(async (oldIndex: number, newIndex: number) => {
+    await reorderWorkspaceGroups(oldIndex, newIndex, setData, user?.id);
+  }, [setData, user]);
 
   // Get all bookmarked tabs
+  // This function doesn't need useCallback if it's only used internally or if its identity doesn't matter for performance.
+  // If it were a prop to a memoized component, then useCallback might be considered.
   const getBookmarkedTabs = (): Tab[] => {
     return data.tabs.filter(tab => tab.bookmarked);
   };
@@ -191,6 +198,7 @@ const useWorkspaceData = () => {
     deleteGroup,
     moveItem,
     toggleBookmark,
+    reorderGroups, // Added reorderGroups
     getBookmarkedTabs,
   };
 };
