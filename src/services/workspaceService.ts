@@ -291,57 +291,41 @@ export const addItemToSupabase = async (type: string, item: any, userId: string)
 // Update item in Supabase
 export const updateItemInSupabase = async (type: string, id: string, updates: any, data: WorkspaceData, userId: string): Promise<void> => {
   try {
+    let supabaseUpdates: Record<string, any> = {};
+
     if (type === "tab") {
-      // Convert groupId to group_id for Supabase
-      const supabaseUpdates = { 
-        ...updates,
-        group_id: updates.groupId,
-      };
-      
-      if (updates.groupId !== undefined) {
-        delete supabaseUpdates.groupId;
+      if (updates.title !== undefined) supabaseUpdates.title = updates.title;
+      if (updates.url !== undefined) supabaseUpdates.url = updates.url;
+      if (updates.favicon !== undefined) supabaseUpdates.favicon = updates.favicon;
+      if (updates.bookmarked !== undefined) supabaseUpdates.bookmarked = updates.bookmarked;
+      if (updates.groupId !== undefined) supabaseUpdates.group_id = updates.groupId;
+      // Add other Tab fields here if they become updatable
+
+      if (Object.keys(supabaseUpdates).length > 0) {
+        await supabase.from('tabs').update(supabaseUpdates).eq('id', id);
       }
-      
-      await supabase
-        .from('tabs')
-        .update(supabaseUpdates)
-        .eq('id', id);
     } 
     else if (type === "note") {
-      // Convert groupId to group_id for Supabase
-      const supabaseUpdates = { 
-        ...updates,
-        group_id: updates.groupId,
-      };
-      
-      if (updates.groupId !== undefined) {
-        delete supabaseUpdates.groupId;
+      if (updates.title !== undefined) supabaseUpdates.title = updates.title;
+      if (updates.content !== undefined) supabaseUpdates.content = updates.content;
+      if (updates.groupId !== undefined) supabaseUpdates.group_id = updates.groupId;
+      // Add other Note fields here
+
+      if (Object.keys(supabaseUpdates).length > 0) {
+        await supabase.from('notes').update(supabaseUpdates).eq('id', id);
       }
-      
-      await supabase
-        .from('notes')
-        .update(supabaseUpdates)
-        .eq('id', id);
     } 
     else if (type === "todo") {
-      // For todo lists, we need to handle both the list and its items
-      const todoList = data.todoLists.find(list => list.id === id);
-      if (!todoList) return;
-      
-      // Update todo list title or group
-      if (updates.title !== undefined || updates.groupId !== undefined) {
-        const supabaseUpdates = {
-          ...(updates.title !== undefined ? { title: updates.title } : {}),
-          ...(updates.groupId !== undefined ? { group_id: updates.groupId } : {})
-        };
-        
-        await supabase
-          .from('todo_lists')
-          .update(supabaseUpdates)
-          .eq('id', id);
+      // Handle TodoList specific fields (title, groupId)
+      let todoListUpdates: Record<string, any> = {};
+      if (updates.title !== undefined) todoListUpdates.title = updates.title;
+      if (updates.groupId !== undefined) todoListUpdates.group_id = updates.groupId;
+
+      if (Object.keys(todoListUpdates).length > 0) {
+        await supabase.from('todo_lists').update(todoListUpdates).eq('id', id);
       }
       
-      // Update items if they were changed
+      // Handle TodoItems within the TodoList
       if (updates.items !== undefined) {
         const updatedItems = updates.items as TodoItem[];
         

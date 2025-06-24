@@ -3,11 +3,14 @@ import {
   updateWorkspaceGroup,
   deleteWorkspaceGroup,
   addWorkspaceItem,
+  updateWorkspaceItem, // Added updateWorkspaceItem
   moveWorkspaceItem,
   deleteWorkspaceItem,
+  reorderWorkspaceGroups, // Added reorderWorkspaceGroups
 } from './workspaceCrud';
 import { WorkspaceData, Group, Tab, Note, TodoList, ItemType, initialWorkspaceData } from '@/types/workspace';
 import * as workspaceService from '@/services/workspaceService'; // To mock Supabase functions
+import { arrayMove } from '@dnd-kit/sortable'; // For reorder test verification
 
 // Mock the workspaceService module that handles Supabase calls
 jest.mock('@/services/workspaceService', () => ({
@@ -46,16 +49,19 @@ describe('workspaceCrud Functions', () => {
   });
 
   // Helper to add initial data for testing updates/deletes
+  // Extended to include more groups for reordering tests
   const setupInitialData = () => {
-    const group1: Group = { id: 'g1', title: 'Group 1', color: 'red', createdAt: '' };
-    const group2: Group = { id: 'g2', title: 'Group 2', color: 'blue', createdAt: '' };
-    currentData.groups = [group1, group2];
+    const group1: Group = { id: 'g1', title: 'Group 1', color: 'red', createdAt: '1' };
+    const group2: Group = { id: 'g2', title: 'Group 2', color: 'blue', createdAt: '2' };
+    const group3: Group = { id: 'g3', title: 'Group 3', color: 'green', createdAt: '3' };
+    currentData.groups = [group1, group2, group3];
 
-    const tab1: Tab = { id: 't1', title: 'Tab 1', url: 'url1', groupId: 'g1', favicon:'', bookmarked: false, createdAt: '' };
-    const tab2: Tab = { id: 't2', title: 'Tab 2', url: 'url2', groupId: 'g1', favicon:'', bookmarked: false, createdAt: '' };
-    const note1: Note = { id: 'n1', title: 'Note 1', content: 'content1', groupId: 'g1', createdAt: '' };
+    const tab1: Tab = { id: 't1', title: 'Tab 1', url: 'url1', groupId: 'g1', favicon:'', bookmarked: false, createdAt: '1' };
+    const tab2: Tab = { id: 't2', title: 'Tab 2', url: 'url2', groupId: 'g1', favicon:'', bookmarked: false, createdAt: '2' };
+    const note1: Note = { id: 'n1', title: 'Note 1', content: 'content1', groupId: 'g1', createdAt: '1' };
     currentData.tabs = [tab1, tab2];
     currentData.notes = [note1];
+    currentData.todoLists = []; // Ensure it's initialized
   };
 
 
@@ -130,6 +136,80 @@ describe('workspaceCrud Functions', () => {
       // Check Supabase call
       expect(workspaceService.moveItemInSupabase).toHaveBeenCalledTimes(1);
       expect(workspaceService.moveItemInSupabase).toHaveBeenCalledWith('tab', itemIdToMove, newGroupId);
+    });
+  });
+
+  describe('updateWorkspaceItem', () => {
+    test('should update tab title in state and call Supabase', async () => {
+      setupInitialData();
+      const tabIdToUpdate = 't1';
+      const updates: Partial<Tab> = { title: 'Updated Tab 1 Title' };
+      const dataBeforeUpdate = JSON.parse(JSON.stringify(currentData));
+
+
+      await updateWorkspaceItem('tab', tabIdToUpdate, updates, dataBeforeUpdate, mockSetData, userId);
+
+      // Check state update
+      expect(mockSetData).toHaveBeenCalledTimes(1);
+      const updatedTab = currentData.tabs.find(t => t.id === tabIdToUpdate);
+      expect(updatedTab).toBeDefined();
+      expect(updatedTab?.title).toBe(updates.title);
+      expect(updatedTab?.url).toBe(dataBeforeUpdate.tabs.find(t => t.id === tabIdToUpdate)?.url); // Other fields unchanged
+
+      // Check Supabase call
+      expect(workspaceService.updateItemInSupabase).toHaveBeenCalledTimes(1);
+      expect(workspaceService.updateItemInSupabase).toHaveBeenCalledWith('tab', tabIdToUpdate, updates, dataBeforeUpdate, userId);
+    });
+
+    test('should update note content in state and call Supabase', async () => {
+        setupInitialData();
+        const noteIdToUpdate = 'n1';
+        const updates: Partial<Note> = { content: 'Updated Note Content' };
+        const dataBeforeUpdate = JSON.parse(JSON.stringify(currentData));
+
+        await updateWorkspaceItem('note', noteIdToUpdate, updates, dataBeforeUpdate, mockSetData, userId);
+
+        // Check state update
+        expect(mockSetData).toHaveBeenCalledTimes(1);
+        const updatedNote = currentData.notes.find(n => n.id === noteIdToUpdate);
+        expect(updatedNote).toBeDefined();
+        expect(updatedNote?.content).toBe(updates.content);
+        expect(updatedNote?.title).toBe(dataBeforeUpdate.notes.find(n => n.id === noteIdToUpdate)?.title); // Other fields unchanged
+
+        // Check Supabase call
+        expect(workspaceService.updateItemInSupabase).toHaveBeenCalledTimes(1);
+        expect(workspaceService.updateItemInSupabase).toHaveBeenCalledWith('note', noteIdToUpdate, updates, dataBeforeUpdate, userId);
+      });
+  });
+
+  describe('reorderWorkspaceGroups', () => {
+    test('should reorder groups in state and NOT call Supabase (yet)', async () => {
+      setupInitialData(); // Has g1, g2, g3
+      const oldIndex = 0; // g1
+      const newIndex = 2; // Move g1 to the end (g2, g3, g1)
+
+      const originalGroups = [...currentData.groups];
+
+      await reorderWorkspaceGroups(oldIndex, newIndex, mockSetData, userId);
+
+      // Check state update
+      expect(mockSetData).toHaveBeenCalledTimes(1);
+      const expectedOrder = arrayMove(originalGroups, oldIndex, newIndex);
+      expect(currentData.groups.map(g => g.id)).toEqual(expectedOrder.map(g => g.id));
+      expect(currentData.groups[newIndex].id).toBe(originalGroups[oldIndex].id);
+
+
+      // Check Supabase call (should NOT be called for now as per TODO)
+      // This assumes no Supabase function is named e.g., `reorderGroupsInSupabase` yet
+      Object.keys(workspaceService).forEach(key => {
+        if (key.toLowerCase().includes('reorder') || key.toLowerCase().includes('grouporder')) {
+          expect(workspaceService[key as keyof typeof workspaceService]).not.toHaveBeenCalled();
+        }
+      });
+       // Verify no other Supabase modification calls were made for this specific operation
+       expect(workspaceService.updateGroupInSupabase).not.toHaveBeenCalled();
+       expect(workspaceService.addGroupToSupabase).not.toHaveBeenCalled();
+       expect(workspaceService.deleteGroupFromSupabase).not.toHaveBeenCalled();
     });
   });
 });

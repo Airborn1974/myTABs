@@ -21,7 +21,8 @@ import { MoreHorizontal } from "lucide-react"; // Icon for the dropdown trigger
 import TabCard from "./TabCard";
 import NoteCard from "./NoteCard";
 import { Badge } from "@/components/ui/badge";
-import { useWorkspace, Tab, Note, TodoList, Group } from "@/hooks/useWorkspace"; // Re-added for toggleBookmark
+import { useWorkspace, Tab, Note, TodoList, Group } from "@/hooks/useWorkspace";
+import { useToast } from "@/hooks/use-toast"; // Added useToast
 import TodoListComponent from "./TodoListComponent";
 
 interface TabGroupProps {
@@ -31,6 +32,7 @@ interface TabGroupProps {
   notes: Note[];
   todoLists: TodoList[];
   onDeleteTab: (id: string) => void;
+  onRenameTab: (tabId: string, newTitle: string) => void; // Added for renaming tabs
   onUpdateNote: (id: string, updates: Partial<Note>) => void;
   onDeleteNote: (id: string) => void;
   onUpdateTodoList: (id: string, updates: Partial<TodoList>) => void;
@@ -49,6 +51,7 @@ const TabGroup: React.FC<TabGroupProps> = ({
   notes,
   todoLists,
   onDeleteTab,
+  onRenameTab, // Added for renaming tabs
   onUpdateNote,
   onDeleteNote,
   onUpdateTodoList,
@@ -60,7 +63,8 @@ const TabGroup: React.FC<TabGroupProps> = ({
   onMoveTodoList,
 }) => {
   const groupColor = group.color || "#4f46e5";
-  const { toggleBookmark } = useWorkspace(); // Re-added for TabCard
+  const { toggleBookmark, updateItem } = useWorkspace();
+  const { toast } = useToast(); // Added toast
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState(group.title);
@@ -69,16 +73,30 @@ const TabGroup: React.FC<TabGroupProps> = ({
 
   const handleRenameGroup = () => {
     if (newGroupName.trim() === "") {
-      // TODO: Show a toast or error message for empty name
+      toast({
+        title: "Error",
+        description: "Group name cannot be empty.",
+        variant: "destructive",
+      });
       return;
     }
     onRenameGroup(group.id, newGroupName.trim());
     setIsRenameDialogOpen(false);
+    toast({
+      title: "Group Renamed",
+      description: `Group "${group.title}" renamed to "${newGroupName.trim()}".`,
+    });
   };
 
   const handleDeleteGroup = () => {
+    const originalTitle = group.title; // Capture title before it's potentially unavailable
     onDeleteGroup(group.id);
     setIsDeleteDialogOpen(false);
+    toast({
+      title: "Group Deleted",
+      description: `Group "${originalTitle}" and all its items have been deleted.`,
+      variant: "destructive"
+    });
   };
   
   return (
@@ -123,8 +141,9 @@ const TabGroup: React.FC<TabGroupProps> = ({
               tab={tab}
               groups={otherGroups}
               onDelete={() => onDeleteTab(tab.id)}
-              onToggleBookmark={() => toggleBookmark(tab.id)} // Passed down
+              onToggleBookmark={() => toggleBookmark(tab.id)}
               onMoveItem={(newGroupId) => onMoveTab(tab.id, newGroupId)}
+              onRenameTab={(tabId, newTitle) => updateItem("tab", tabId, { title: newTitle })} // Added this
             />
           ))}
 

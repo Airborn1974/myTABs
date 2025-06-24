@@ -20,6 +20,7 @@ import {
   toggleBookmarkInSupabase,
   handleSupabaseError
 } from "@/services/workspaceService";
+import { arrayMove } from "@dnd-kit/sortable"; // For reordering, use directly
 
 // Add new item (tab, note, todoList)
 export const addWorkspaceItem = async (
@@ -250,6 +251,29 @@ export const moveWorkspaceItem = async (
     } catch (error) {
       handleSupabaseError(error, `moving ${type}`);
     }
+  }
+};
+
+// Reorder groups
+export const reorderWorkspaceGroups = async (
+  oldIndex: number,
+  newIndex: number,
+  setData: React.Dispatch<React.SetStateAction<WorkspaceData>>,
+  userId?: string // Though not used for Supabase yet
+) => {
+  setData(prev => {
+    // Use the imported arrayMove from @dnd-kit/sortable
+    const reorderedGroups = arrayMove(prev.groups, oldIndex, newIndex);
+    return { ...prev, groups: reorderedGroups };
+  });
+
+  // TODO: Persist group order in Supabase. This will likely require:
+  // 1. Adding an 'order' or 'position' field to the 'groups' table in Supabase.
+  // 2. Updating the 'order' field for all affected groups in a transaction.
+  // This is a schema change and more complex backend logic, deferred for now.
+  if (userId) {
+    // console.log("Reordering groups for user:", userId, "New order not yet saved to Supabase.");
+    // When implementing Supabase update, ensure to handle potential errors and possibly revert local state or notify user.
   }
 };
 

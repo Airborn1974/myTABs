@@ -1,5 +1,5 @@
-import React from 'react';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import React, { useState } from 'react'; // Added useState
+import { useWorkspace, Tab } from '@/hooks/useWorkspace'; // Added Tab
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,13 +16,26 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
-// TODO: Add Dialog components for editing tab details if needed
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog"; // Added Dialog components
+import { useToast } from "@/hooks/use-toast"; // Added useToast
 
 const TabManagementPage: React.FC = () => {
   const { data, isLoading, deleteItem, updateItem, moveItem } = useWorkspace();
   const { tabs, groups } = data;
+  const { toast } = useToast(); // Added toast
 
-  // TODO: Add state for selected tabs, filters, sorting, edit dialog
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [editingTab, setEditingTab] = useState<Tab | null>(null);
+  const [newTabTitle, setNewTabTitle] = useState("");
+
+  // TODO: Add state for selected tabs, filters, sorting
   // const [selectedTabs, setSelectedTabs] = React.useState<string[]>([]);
   // const [filterGroup, setFilterGroup] = React.useState<string>('');
   // const [searchTerm, setSearchTerm] = React.useState<string>('');
@@ -37,18 +50,38 @@ const TabManagementPage: React.FC = () => {
 
   const handleMoveTab = (tabId: string, newGroupId: string) => {
     moveItem('tab', tabId, newGroupId);
+    toast({ title: "Tab Moved", description: "The tab has been moved to the new group." });
   };
 
   const handleDeleteTab = (tabId: string) => {
     deleteItem('tab', tabId);
+    toast({ title: "Tab Deleted", description: "The tab has been deleted.", variant: "destructive" });
   };
 
-  // TODO: Implement edit tab functionality
-  // const handleEditTab = (tabId: string, newDetails: Partial<Tab>) => {
-  //   updateItem('tab', tabId, newDetails);
-  // };
+  const openRenameDialog = (tab: Tab) => {
+    setEditingTab(tab);
+    setNewTabTitle(tab.title);
+    setIsRenameDialogOpen(true);
+  };
+
+  const handleRenameTab = () => {
+    if (!editingTab) return;
+    if (newTabTitle.trim() === "") {
+      toast({
+        title: "Error",
+        description: "Tab title cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+    updateItem('tab', editingTab.id, { title: newTabTitle.trim() });
+    setIsRenameDialogOpen(false);
+    setEditingTab(null);
+    toast({ title: "Tab Renamed", description: `Tab "${editingTab.title}" renamed to "${newTabTitle.trim()}".` });
+  };
 
   return (
+    <>
     <div className="container mx-auto p-4 md:p-6">
       <header className="mb-6">
         <h1 className="text-3xl font-bold">Tab Management</h1>
@@ -119,9 +152,9 @@ const TabManagementPage: React.FC = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => alert('Edit functionality to be implemented for tab: ' + tab.title)}>
+                          <DropdownMenuItem onClick={() => openRenameDialog(tab)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            Edit
+                            Rename Tab
                           </DropdownMenuItem>
                           <DropdownMenuSub>
                             <DropdownMenuSubTrigger>
@@ -161,7 +194,34 @@ const TabManagementPage: React.FC = () => {
           </TableBody>
         </Table>
       </div>
+
+      {/* Rename Tab Dialog */}
+      <Dialog open={isRenameDialogOpen} onOpenChange={(isOpen) => {
+        setIsRenameDialogOpen(isOpen);
+        if (!isOpen) setEditingTab(null); // Reset editing tab when dialog closes
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename Tab: {editingTab?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              value={newTabTitle}
+              onChange={(e) => setNewTabTitle(e.target.value)}
+              placeholder="Enter new tab title"
+              onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTab(); }}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" onClick={() => setEditingTab(null)}>Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleRenameTab}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+    </>
   );
 };
 

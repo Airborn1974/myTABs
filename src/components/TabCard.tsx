@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
@@ -11,22 +11,34 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Bookmark, BookmarkCheck, MoreVertical, Trash2, MoveRight } from "lucide-react";
-import { Tab, Group } from "@/hooks/useWorkspace"; // Added Group
+import { ExternalLink, Bookmark, BookmarkCheck, MoreVertical, Trash2, MoveRight, Edit } from "lucide-react"; // Added Edit
+import { Tab, Group } from "@/hooks/useWorkspace";
 import { useToast } from "@/hooks/use-toast";
 
 interface TabCardProps {
   tab: Tab;
-  groups: Group[]; // List of all groups for moving
+  groups: Group[];
   onDelete: () => void;
   onToggleBookmark?: () => void;
-  onMoveItem: (newGroupId: string) => void; // Function to move the item
+  onMoveItem: (newGroupId: string) => void;
+  onRenameTab: (tabId: string, newTitle: string) => void; // Added for renaming
 }
 
-const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookmark, onMoveItem }) => {
+const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookmark, onMoveItem, onRenameTab }) => {
   const defaultFavicon = "/placeholder.svg";
   const { toast } = useToast();
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [newTabTitle, setNewTabTitle] = useState(tab.title);
 
   const handleBookmarkClick = () => {
     if (onToggleBookmark) {
@@ -38,9 +50,27 @@ const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookma
     }
   };
 
+  const handleRenameTab = () => {
+    if (newTabTitle.trim() === "") {
+      toast({
+        title: "Error",
+        description: "Tab title cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+    onRenameTab(tab.id, newTabTitle.trim());
+    setIsRenameDialogOpen(false);
+    toast({
+      title: "Tab Renamed",
+      description: `Tab "${tab.title}" renamed to "${newTabTitle.trim()}".`,
+    });
+  };
+
   const otherGroups = groups.filter(g => g.id !== tab.groupId);
 
   return (
+    <>
     <Card className="card-shadow card-hover overflow-hidden animate-fade-in group/card">
       <CardContent className="p-3"> {/* Reduced padding for a more compact look */}
         <div className="flex items-start justify-between">
@@ -98,6 +128,13 @@ const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookma
                   {tab.bookmarked ? "Remove Bookmark" : "Add Bookmark"}
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem onClick={() => {
+                setNewTabTitle(tab.title); // Initialize with current title
+                setIsRenameDialogOpen(true);
+              }}>
+                <Edit className="mr-2 h-4 w-4" />
+                Rename Tab
+              </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <MoveRight className="mr-2 h-4 w-4" />
@@ -125,6 +162,30 @@ const TabCard: React.FC<TabCardProps> = ({ tab, groups, onDelete, onToggleBookma
         </div>
       </CardContent>
     </Card>
+
+    {/* Rename Tab Dialog */}
+    <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Rename Tab</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <Input
+            value={newTabTitle}
+            onChange={(e) => setNewTabTitle(e.target.value)}
+            placeholder="Enter new tab title"
+            onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTab(); }}
+          />
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
+          <Button onClick={handleRenameTab}>Save</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 };
 
